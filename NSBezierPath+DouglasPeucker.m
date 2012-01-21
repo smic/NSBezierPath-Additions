@@ -19,6 +19,8 @@
 
 @end
 
+CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c);
+
 CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c) {
     
     CGFloat lA = sqrt((abs(b.x)-abs(c.x))*(abs(b.x)-abs(c.x))+(abs(b.y)-abs(c.y))*(abs(b.y)-abs(c.y)));
