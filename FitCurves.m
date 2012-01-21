@@ -19,7 +19,6 @@
 typedef CGPoint *BezierCurve;
 
 /* Forward declarations */
-void		FitCurve();
 static	void		FitCubic();
 static	CGFloat		*Reparameterize();
 static	CGFloat		NewtonRaphsonRootFind();
@@ -50,15 +49,16 @@ static CGFloat V2DistanceBetween2Points(CGPoint a, CGPoint b);
 #define MAXPOINTS	1000		/* The most points you can have */
 
 
-void DrawBezierCurve(n, curve, userInfo)
+void DrawBezierCurve(n, curve, path)
 NSUInteger n;
-void *userInfo;
 BezierCurve curve;
+NSBezierPath *path;
+
 {
     NSPoint point1 = NSMakePoint(curve[1].x, curve[1].y);
     NSPoint point2 = NSMakePoint(curve[2].x, curve[2].y);
     NSPoint point3 = NSMakePoint(curve[3].x, curve[3].y);
-    [(NSBezierPath *)userInfo curveToPoint:point3 controlPoint1:point1 controlPoint2:point2];
+    [path curveToPoint:point3 controlPoint1:point1 controlPoint2:point2];
     
 }
 
@@ -66,17 +66,17 @@ BezierCurve curve;
  *  FitCurve :
  *  	Fit a Bezier curve to a set of digitized points 
  */
-void FitCurve(d, nPts, error,userInfo)
+void FitCurve(d, nPts, error, path)
     CGPoint     *d;			/*  Array of digitized points	*/
     NSUInteger  nPts;		/*  Number of digitized points	*/
     CGFloat     error;		/*  User-defined error squared	*/
-    void        *userInfo;  /*  object for Callbacks */
+    NSBezierPath        *path;  /*  object for Callbacks */
 {
     CGPoint	tHat1, tHat2;	/*  Unit tangent vectors at endpoints */
 
     tHat1 = ComputeLeftTangent(d, 0);
     tHat2 = ComputeRightTangent(d, nPts - 1);
-    FitCubic(d, 0, nPts - 1, tHat1, tHat2, error, userInfo);
+    FitCubic(d, 0, nPts - 1, tHat1, tHat2, error, path);
 }
 
 
@@ -85,12 +85,12 @@ void FitCurve(d, nPts, error,userInfo)
  *  FitCubic :
  *  	Fit a Bezier curve to a (sub)set of digitized points
  */
-static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
+static void FitCubic(d, first, last, tHat1, tHat2, error, path)
     CGPoint     *d;			/*  Array of digitized points */
     NSUInteger  first, last;	/* Indices of first and last pts in region */
     CGPoint     tHat1, tHat2;	/* Unit tangent vectors at endpoints */
     CGFloat	error;		/*  User-defined error squared	   */
-    void    *userInfo;  /* object for callback in DrawBezierCurve */
+    NSBezierPath    *path;  /* object for callback in DrawBezierCurve */
 {
     BezierCurve	bezCurve; /*Control points of fitted Bezier curve*/
     CGFloat	*u;		/*  Parameter values for point  */
@@ -114,7 +114,7 @@ static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
 		bezCurve[3] = d[last];
 		bezCurve[1] = V2Add(bezCurve[0], V2Scale(tHat1, dist));
 		bezCurve[2] = V2Add(bezCurve[3], V2Scale(tHat2, dist));
-		DrawBezierCurve(3, bezCurve, userInfo);
+		DrawBezierCurve(3, bezCurve, path);
 		free((void *)bezCurve);
 		return;
     }
@@ -126,7 +126,7 @@ static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
     /*  Find max deviation of points to fitted curve */
     maxError = ComputeMaxError(d, first, last, bezCurve, u, &splitPoint);
     if (maxError < error) {
-		DrawBezierCurve(3, bezCurve, userInfo);
+		DrawBezierCurve(3, bezCurve, path);
 		free((void *)u);
 		free((void *)bezCurve);
 		return;
@@ -143,7 +143,7 @@ static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
 	    	maxError = ComputeMaxError(d, first, last,
 				       bezCurve, uPrime, &splitPoint);
 	    	if (maxError < error) {
-			DrawBezierCurve(3, bezCurve, userInfo);
+			DrawBezierCurve(3, bezCurve, path);
 			free((void *)u);
 			free((void *)bezCurve);
 			free((void *)uPrime);
@@ -158,9 +158,9 @@ static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
     free((void *)u);
     free((void *)bezCurve);
     tHatCenter = ComputeCenterTangent(d, splitPoint);
-    FitCubic(d, first, splitPoint, tHat1, tHatCenter, error, userInfo);
+    FitCubic(d, first, splitPoint, tHat1, tHatCenter, error, path);
     tHatCenter = V2Negate(tHatCenter);
-    FitCubic(d, splitPoint, last, tHatCenter, tHat2, error, userInfo);
+    FitCubic(d, splitPoint, last, tHatCenter, tHat2, error, path);
 }
 
 
@@ -413,7 +413,7 @@ static CGPoint ComputeLeftTangent(d, end)
 
 static CGPoint ComputeRightTangent(d, end)
     CGPoint	*d;			/*  Digitized points		*/
-    int		end;		/*  Index to "right" end of region */
+    NSUInteger		end;		/*  Index to "right" end of region */
 {
     CGPoint	tHat2;
     tHat2 = V2Sub(d[end-1], d[end]);
@@ -560,6 +560,6 @@ static CGFloat V2Dot(CGPoint a, CGPoint b) {
 static CGFloat V2DistanceBetween2Points(CGPoint a, CGPoint b) {
     double dx = a.x - b.x;
     double dy = a.y - b.y;
-	return(sqrt((dx*dx)+(dy*dy)));
+	return hypotf(dx, dy);
 }
 

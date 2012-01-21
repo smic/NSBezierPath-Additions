@@ -20,41 +20,31 @@
     // number of elements
     NSUInteger count = [self elementCount];
     // allocating C-style array of CGPoints building the path
-    CGPoint *pathPointArray = malloc(sizeof(CGPoint)*count);
+    CGPoint pathPoints[count];
     // allocating C-style array of CGPoints to get the points of the single elements
-    CGPoint *aPointArray = malloc(sizeof(CGPoint)*3);
+    CGPoint points[3];
     //iterating through the path
     for (int i=0;i<count;i++) {
         //get elementType and associated point for the element 
-        NSBezierPathElement type = [self elementAtIndex:i associatedPoints:aPointArray];
+        NSBezierPathElement type = [self elementAtIndex:i associatedPoints:points];
         //if a element is a NSCurveToBezierPathElement the algorythm does not work
         //returning without doing any changes to the Path
         if (type==NSCurveToBezierPathElement) {
             NSLog(@"Schneinder_FitCurves: Error: Path contains CurveElement");
-            free(aPointArray);
-            free(pathPointArray);
             return 1;
         }
         //adding point of current element to the pointArray
-        pathPointArray[i] = aPointArray[0];
+        pathPoints[i] = points[0];
     }
-    // free the temp pointArray
-    free(aPointArray);
     //remove all points the curveelements will be added to this curve
     [self removeAllPoints];
     
     // move Path to the startPoint
-    [self moveToPoint:pathPointArray[0]];
+    [self moveToPoint:pathPoints[0]];
     
-    /*
-     Start Algorythm
-     */
-    FitCurve(pathPointArray, count, error, self);
-
+    // Start Algorythm
+    FitCurve(pathPoints, count, error, self);
     
-    
-    //free pointArray
-    free(pathPointArray);
     //no error return 0
     return 0;
 }
