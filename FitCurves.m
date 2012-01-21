@@ -9,104 +9,74 @@
  * http://tobias-conradi.de/index.php/2011/05/06/nsbezierpath-additions
  */
 
-//#define TESTMODE
-
 /*  fit_cubic.c	*/									
 /*	Piecewise cubic fitting code	*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "GraphicsGems.h"					
-#import "TCLine.h"
 
-typedef Point2 *BezierCurve;
+typedef CGPoint *BezierCurve;
 
 /* Forward declarations */
 void		FitCurve();
 static	void		FitCubic();
-static	double		*Reparameterize();
-static	double		NewtonRaphsonRootFind();
-static	Point2		BezierII();
-static	double 		B0(), B1(), B2(), B3();
-static	Vector2		ComputeLeftTangent();
-static	Vector2		ComputeRightTangent();
-static	Vector2		ComputeCenterTangent();
-static	double		ComputeMaxError();
-static	double		*ChordLengthParameterize();
+static	CGFloat		*Reparameterize();
+static	CGFloat		NewtonRaphsonRootFind();
+static	CGPoint		BezierII();
+static CGFloat B0(CGFloat u);
+static CGFloat B1(CGFloat u);
+static CGFloat B2(CGFloat u);
+static CGFloat B3(CGFloat u);
+static	CGPoint		ComputeLeftTangent();
+static	CGPoint		ComputeRightTangent();
+static	CGPoint		ComputeCenterTangent();
+static	CGFloat		ComputeMaxError();
+static	CGFloat		*ChordLengthParameterize();
 static	BezierCurve	GenerateBezier();
-static	Vector2		V2AddII();
-static	Vector2		V2ScaleIII();
-static	Vector2		V2SubII();
+static	CGPoint		V2ScaleIII();
+static CGFloat V2SquaredLength(CGPoint a);
+static CGFloat V2Length(CGPoint a);
+static CGPoint V2Negate(CGPoint v);
+static CGPoint V2Normalize(CGPoint v);
+static CGPoint V2Scale(CGPoint v, double newlen);
+static CGPoint V2Add(CGPoint a, CGPoint b);
+static CGPoint V2Sub(CGPoint a, CGPoint b);
+static CGFloat V2Dot(CGPoint a, CGPoint b);
+static CGFloat V2DistanceBetween2Points(CGPoint a, CGPoint b);
+
 
 
 #define MAXPOINTS	1000		/* The most points you can have */
 
 
 void DrawBezierCurve(n, curve, userInfo)
-int n;
+NSUInteger n;
 void *userInfo;
 BezierCurve curve;
 {
+    NSPoint point1 = NSMakePoint(curve[1].x, curve[1].y);
+    NSPoint point2 = NSMakePoint(curve[2].x, curve[2].y);
+    NSPoint point3 = NSMakePoint(curve[3].x, curve[3].y);
+    [(NSBezierPath *)userInfo curveToPoint:point3 controlPoint1:point1 controlPoint2:point2];
     
-    [(NSBezierPath *)userInfo curveToPoint:curve[3] controlPoint1:curve[1] controlPoint2:curve[2]];
-    
 }
-
-
-#ifdef TESTMODE
-
-void finishBezierCurve(userInfo)
-    void *userInfo;
-{
-    /*Curveend Handler*/
-}
-
-/*
- *  main:
- *	Example of how to use the curve-fitting code.  Given an array
- *   of points and a tolerance (squared error between points and 
- *	fitted curve), the algorithm will generate a piecewise
- *	cubic Bezier representation that approximates the points.
- *	When a cubic is generated, the routine "DrawBezierCurve"
- *	is called, which outputs the Bezier curve just created
- *	(arguments are the degree and the control points, respectively).
- *	Users will have to implement this function themselves 	
- *   ascii output, etc. 
- *
- */
-void testmain()
-{
-    static Point2 d[7] = {	/*  Digitized points */
-	{ 0.0, 0.0 },
-	{ 0.0, 0.5 },
-	{ 1.1, 1.4 },
-	{ 2.1, 1.6 },
-	{ 3.2, 1.1 },
-	{ 4.0, 0.2 },
-	{ 4.0, 0.0 },
-    };
-    double	error = 4.0;		/*  Squared error */
-    FitCurve(d, 7, error);		/*  Fit the Bezier curves */
-}
-#endif						 /* TESTMODE */
 
 /*
  *  FitCurve :
  *  	Fit a Bezier curve to a set of digitized points 
  */
 void FitCurve(d, nPts, error,userInfo)
-    Point2	*d;			/*  Array of digitized points	*/
-    int		nPts;		/*  Number of digitized points	*/
-    double	error;		/*  User-defined error squared	*/
-    void    *userInfo;  /*  object for Callbacks */
+    CGPoint     *d;			/*  Array of digitized points	*/
+    NSUInteger  nPts;		/*  Number of digitized points	*/
+    CGFloat     error;		/*  User-defined error squared	*/
+    void        *userInfo;  /*  object for Callbacks */
 {
-    Vector2	tHat1, tHat2;	/*  Unit tangent vectors at endpoints */
+    CGPoint	tHat1, tHat2;	/*  Unit tangent vectors at endpoints */
 
     tHat1 = ComputeLeftTangent(d, 0);
     tHat2 = ComputeRightTangent(d, nPts - 1);
     FitCubic(d, 0, nPts - 1, tHat1, tHat2, error, userInfo);
-    
 }
 
 
@@ -116,35 +86,34 @@ void FitCurve(d, nPts, error,userInfo)
  *  	Fit a Bezier curve to a (sub)set of digitized points
  */
 static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
-    Point2	*d;			/*  Array of digitized points */
-    int		first, last;	/* Indices of first and last pts in region */
-    Vector2	tHat1, tHat2;	/* Unit tangent vectors at endpoints */
-    double	error;		/*  User-defined error squared	   */
+    CGPoint     *d;			/*  Array of digitized points */
+    NSUInteger  first, last;	/* Indices of first and last pts in region */
+    CGPoint     tHat1, tHat2;	/* Unit tangent vectors at endpoints */
+    CGFloat	error;		/*  User-defined error squared	   */
     void    *userInfo;  /* object for callback in DrawBezierCurve */
 {
     BezierCurve	bezCurve; /*Control points of fitted Bezier curve*/
-    double	*u;		/*  Parameter values for point  */
-    double	*uPrime;	/*  Improved parameter values */
-    double	maxError;	/*  Maximum fitting error	 */
-    int		splitPoint;	/*  Point to split point set at	 */
-    int		nPts;		/*  Number of points in subset  */
-    double	iterationError; /*Error below which you try iterating  */
-    int		maxIterations = 4; /*  Max times to try iterating  */
-    Vector2	tHatCenter;   	/* Unit tangent vector at splitPoint */
-    int		i;		
+    CGFloat	*u;		/*  Parameter values for point  */
+    CGFloat	*uPrime;	/*  Improved parameter values */
+    CGFloat	maxError;	/*  Maximum fitting error	 */
+    NSUInteger		splitPoint;	/*  Point to split point set at	 */
+    NSUInteger		nPts;		/*  Number of points in subset  */
+    CGFloat	iterationError; /*Error below which you try iterating  */
+    NSUInteger		maxIterations = 4; /*  Max times to try iterating  */
+    CGPoint	tHatCenter;   	/* Unit tangent vector at splitPoint */
 
     iterationError = error * error;
     nPts = last - first + 1;
 
     /*  Use heuristic if region only has two points in it */
     if (nPts == 2) {
-	    double dist = V2DistanceBetween2Points(&d[last], &d[first]) / 3.0;
+	    double dist = V2DistanceBetween2Points(d[last], d[first]) / 3.0;
 
-		bezCurve = (Point2 *)malloc(4 * sizeof(Point2));
+		bezCurve = (CGPoint *)malloc(4 * sizeof(CGPoint));
 		bezCurve[0] = d[first];
 		bezCurve[3] = d[last];
-		V2Add(&bezCurve[0], V2Scale(&tHat1, dist), &bezCurve[1]);
-		V2Add(&bezCurve[3], V2Scale(&tHat2, dist), &bezCurve[2]);
+		bezCurve[1] = V2Add(bezCurve[0], V2Scale(tHat1, dist));
+		bezCurve[2] = V2Add(bezCurve[3], V2Scale(tHat2, dist));
 		DrawBezierCurve(3, bezCurve, userInfo);
 		free((void *)bezCurve);
 		return;
@@ -167,7 +136,7 @@ static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
     /*  If error not too large, try some reparameterization  */
     /*  and iteration */
     if (maxError < iterationError) {
-		for (i = 0; i < maxIterations; i++) {
+		for (NSUInteger i = 0; i < maxIterations; i++) {
 	    	uPrime = Reparameterize(d, first, last, u, bezCurve);
 	    	free((void *)bezCurve);
 	    	bezCurve = GenerateBezier(d, first, last, uPrime, tHat1, tHat2);
@@ -190,7 +159,7 @@ static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
     free((void *)bezCurve);
     tHatCenter = ComputeCenterTangent(d, splitPoint);
     FitCubic(d, first, splitPoint, tHat1, tHatCenter, error, userInfo);
-    V2Negate(&tHatCenter);
+    tHatCenter = V2Negate(tHatCenter);
     FitCubic(d, splitPoint, last, tHatCenter, tHat2, error, userInfo);
 }
 
@@ -201,35 +170,34 @@ static void FitCubic(d, first, last, tHat1, tHat2, error, userInfo)
  *
  */
 static BezierCurve  GenerateBezier(d, first, last, uPrime, tHat1, tHat2)
-    Point2	*d;			/*  Array of digitized points	*/
-    int		first, last;		/*  Indices defining region	*/
-    double	*uPrime;		/*  Parameter values for region */
-    Vector2	tHat1, tHat2;	/*  Unit tangents at endpoints	*/
+    CGPoint	*d;			/*  Array of digitized points	*/
+    NSUInteger		first, last;		/*  Indices defining region	*/
+    CGFloat	*uPrime;		/*  Parameter values for region */
+    CGPoint	tHat1, tHat2;	/*  Unit tangents at endpoints	*/
 {
-    int 	i;
-    Vector2 	A[MAXPOINTS][2];	/* Precomputed rhs for eqn	*/
-    int 	nPts;			/* Number of pts in sub-curve */
-    double 	C[2][2];			/* Matrix C		*/
-    double 	X[2];			/* Matrix X			*/
-    double 	det_C0_C1,		/* Determinants of matrices	*/
+    CGPoint 	A[MAXPOINTS][2];	/* Precomputed rhs for eqn	*/
+    NSUInteger 	nPts;			/* Number of pts in sub-curve */
+    CGFloat 	C[2][2];			/* Matrix C		*/
+    CGFloat 	X[2];			/* Matrix X			*/
+    CGFloat 	det_C0_C1,		/* Determinants of matrices	*/
     	   	det_C0_X,
 	   		det_X_C1;
-    double 	alpha_l,		/* Alpha values, left and right	*/
+    CGFloat 	alpha_l,		/* Alpha values, left and right	*/
     	   	alpha_r;
-    Vector2 	tmp;			/* Utility variable		*/
+    CGPoint 	tmp;			/* Utility variable		*/
     BezierCurve	bezCurve;	/* RETURN bezier curve ctl pts	*/
 
-    bezCurve = (Point2 *)malloc(4 * sizeof(Point2));
+    bezCurve = (CGPoint *)malloc(4 * sizeof(CGPoint));
     nPts = last - first + 1;
 
  
     /* Compute the A's	*/
-    for (i = 0; i < nPts; i++) {
-		Vector2		v1, v2;
+    for (NSUInteger i = 0; i < nPts; i++) {
+		CGPoint		v1, v2;
 		v1 = tHat1;
 		v2 = tHat2;
-		V2Scale(&v1, B1(uPrime[i]));
-		V2Scale(&v2, B2(uPrime[i]));
+		v1 = V2Scale(v1, B1(uPrime[i]));
+		v2 = V2Scale(v2, B2(uPrime[i]));
 		A[i][0] = v1;
 		A[i][1] = v2;
     }
@@ -242,25 +210,25 @@ static BezierCurve  GenerateBezier(d, first, last, uPrime, tHat1, tHat2)
     X[0]    = 0.0;
     X[1]    = 0.0;
 
-    for (i = 0; i < nPts; i++) {
-        C[0][0] += V2Dot(&A[i][0], &A[i][0]);
-		C[0][1] += V2Dot(&A[i][0], &A[i][1]);
-/*					C[1][0] += V2Dot(&A[i][0], &A[i][1]);*/	
+    for (NSUInteger i = 0; i < nPts; i++) {
+        C[0][0] += V2Dot(A[i][0], A[i][0]);
+		C[0][1] += V2Dot(A[i][0], A[i][1]);
+        /*					C[1][0] += V2Dot(&A[i][0], &A[i][1]);*/	
 		C[1][0] = C[0][1];
-		C[1][1] += V2Dot(&A[i][1], &A[i][1]);
-
-		tmp = V2SubII(d[first + i],
-	        V2AddII(
-	          V2ScaleIII(d[first], B0(uPrime[i])),
-		    	V2AddII(
-		      		V2ScaleIII(d[first], B1(uPrime[i])),
-		        			V2AddII(
-	                  		V2ScaleIII(d[last], B2(uPrime[i])),
-	                    		V2ScaleIII(d[last], B3(uPrime[i]))))));
-	
-
-	X[0] += V2Dot(&A[i][0], &tmp);
-	X[1] += V2Dot(&A[i][1], &tmp);
+		C[1][1] += V2Dot(A[i][1], A[i][1]);
+        
+		tmp = V2Sub(d[first + i],
+                    V2Add(
+                          V2ScaleIII(d[first], B0(uPrime[i])),
+                          V2Add(
+                                V2ScaleIII(d[first], B1(uPrime[i])),
+                                V2Add(
+                                      V2ScaleIII(d[last], B2(uPrime[i])),
+                                      V2ScaleIII(d[last], B3(uPrime[i]))))));
+        
+        
+        X[0] += V2Dot(A[i][0], tmp);
+        X[1] += V2Dot(A[i][1], tmp);
     }
 
     /* Compute the determinants of C and X	*/
@@ -275,16 +243,15 @@ static BezierCurve  GenerateBezier(d, first, last, uPrime, tHat1, tHat2)
     /* If alpha negative, use the Wu/Barsky heuristic (see text) */
     /* (if alpha is 0, you get coincident control points that lead to
      * divide by zero in any subsequent NewtonRaphsonRootFind() call. */
-    double segLength = V2DistanceBetween2Points(&d[last], &d[first]);
-    double epsilon = 1.0e-6 * segLength;
-    if (alpha_l < epsilon || alpha_r < epsilon)
-    {
+    CGFloat segLength = V2DistanceBetween2Points(d[last], d[first]);
+    CGFloat epsilon = 1.0e-6 * segLength;
+    if (alpha_l < epsilon || alpha_r < epsilon) {
 		/* fall back on standard (probably inaccurate) formula, and subdivide further if needed. */
 		double dist = segLength / 3.0;
 		bezCurve[0] = d[first];
 		bezCurve[3] = d[last];
-		V2Add(&bezCurve[0], V2Scale(&tHat1, dist), &bezCurve[1]);
-		V2Add(&bezCurve[3], V2Scale(&tHat2, dist), &bezCurve[2]);
+		bezCurve[1] = V2Add(bezCurve[0], V2Scale(tHat1, dist));
+		bezCurve[2] = V2Add(bezCurve[3], V2Scale(tHat2, dist));
 		return (bezCurve);
     }
 
@@ -294,8 +261,8 @@ static BezierCurve  GenerateBezier(d, first, last, uPrime, tHat1, tHat2)
     /*  on the tangent vectors, left and right, respectively */
     bezCurve[0] = d[first];
     bezCurve[3] = d[last];
-    V2Add(&bezCurve[0], V2Scale(&tHat1, alpha_l), &bezCurve[1]);
-    V2Add(&bezCurve[3], V2Scale(&tHat2, alpha_r), &bezCurve[2]);
+    bezCurve[1] = V2Add(bezCurve[0], V2Scale(tHat1, alpha_l));
+    bezCurve[2] = V2Add(bezCurve[3], V2Scale(tHat2, alpha_r));
     return (bezCurve);
 }
 
@@ -306,18 +273,17 @@ static BezierCurve  GenerateBezier(d, first, last, uPrime, tHat1, tHat2)
  *   a better parameterization.
  *
  */
-static double *Reparameterize(d, first, last, u, bezCurve)
-    Point2	*d;			/*  Array of digitized points	*/
-    int		first, last;		/*  Indices defining region	*/
-    double	*u;			/*  Current parameter values	*/
+static CGFloat *Reparameterize(d, first, last, u, bezCurve)
+    CGPoint	*d;			/*  Array of digitized points	*/
+    NSUInteger		first, last;		/*  Indices defining region	*/
+    CGFloat	*u;			/*  Current parameter values	*/
     BezierCurve	bezCurve;	/*  Current fitted curve	*/
 {
-    int 	nPts = last-first+1;	
-    int 	i;
-    double	*uPrime;		/*  New parameter values	*/
+    NSUInteger 	nPts = last-first+1;	
+    CGFloat	*uPrime;		/*  New parameter values	*/
 
     uPrime = (double *)malloc(nPts * sizeof(double));
-    for (i = first; i <= last; i++) {
+    for (NSUInteger i = first; i <= last; i++) {
 		uPrime[i-first] = NewtonRaphsonRootFind(bezCurve, d[i], u[i-
 					first]);
     }
@@ -332,26 +298,25 @@ static double *Reparameterize(d, first, last, u, bezCurve)
  */
 static double NewtonRaphsonRootFind(Q, P, u)
     BezierCurve	Q;			/*  Current fitted curve	*/
-    Point2 		P;		/*  Digitized point		*/
-    double 		u;		/*  Parameter value for "P"	*/
+    CGPoint 		P;		/*  Digitized point		*/
+    CGFloat 		u;		/*  Parameter value for "P"	*/
 {
-    double 		numerator, denominator;
-    Point2 		Q1[3], Q2[2];	/*  Q' and Q''			*/
-    Point2		Q_u, Q1_u, Q2_u; /*u evaluated at Q, Q', & Q''	*/
-    double 		uPrime;		/*  Improved u			*/
-    int 		i;
+    CGFloat 		numerator, denominator;
+    CGPoint 		Q1[3], Q2[2];	/*  Q' and Q''			*/
+    CGPoint		Q_u, Q1_u, Q2_u; /*u evaluated at Q, Q', & Q''	*/
+    CGFloat 		uPrime;		/*  Improved u			*/
     
     /* Compute Q(u)	*/
     Q_u = BezierII(3, Q, u);
     
     /* Generate control vertices for Q'	*/
-    for (i = 0; i <= 2; i++) {
+    for (NSUInteger i = 0; i <= 2; i++) {
 		Q1[i].x = (Q[i+1].x - Q[i].x) * 3.0;
 		Q1[i].y = (Q[i+1].y - Q[i].y) * 3.0;
     }
     
     /* Generate control vertices for Q'' */
-    for (i = 0; i <= 1; i++) {
+    for (NSUInteger i = 0; i <= 1; i++) {
 		Q2[i].x = (Q1[i+1].x - Q1[i].x) * 2.0;
 		Q2[i].y = (Q1[i+1].y - Q1[i].y) * 2.0;
     }
@@ -378,25 +343,24 @@ static double NewtonRaphsonRootFind(Q, P, u)
  *  	Evaluate a Bezier curve at a particular parameter value
  * 
  */
-static Point2 BezierII(degree, V, t)
-    int		degree;		/* The degree of the bezier curve	*/
-    Point2 	*V;		/* Array of control points		*/
-    double 	t;		/* Parametric value to find point for	*/
+static CGPoint BezierII(degree, V, t)
+    NSUInteger		degree;		/* The degree of the bezier curve	*/
+    CGPoint 	*V;		/* Array of control points		*/
+    CGFloat 	t;		/* Parametric value to find point for	*/
 {
-    int 	i, j;		
-    Point2 	Q;	        /* Point on curve at parameter t	*/
-    Point2 	*Vtemp;		/* Local copy of control points		*/
+    CGPoint 	Q;	        /* Point on curve at parameter t	*/
+    CGPoint 	*Vtemp;		/* Local copy of control points		*/
 
     /* Copy array	*/
-    Vtemp = (Point2 *)malloc((unsigned)((degree+1) 
-				* sizeof (Point2)));
-    for (i = 0; i <= degree; i++) {
+    Vtemp = (CGPoint *)malloc((unsigned)((degree+1) 
+				* sizeof (CGPoint)));
+    for (NSUInteger i = 0; i <= degree; i++) {
 		Vtemp[i] = V[i];
     }
 
     /* Triangle computation	*/
-    for (i = 1; i <= degree; i++) {	
-		for (j = 0; j <= degree-i; j++) {
+    for (NSUInteger i = 1; i <= degree; i++) {	
+		for (NSUInteger j = 0; j <= degree-i; j++) {
 	    	Vtemp[j].x = (1.0 - t) * Vtemp[j].x + t * Vtemp[j+1].x;
 	    	Vtemp[j].y = (1.0 - t) * Vtemp[j].y + t * Vtemp[j+1].y;
 		}
@@ -412,31 +376,22 @@ static Point2 BezierII(degree, V, t)
  *  B0, B1, B2, B3 :
  *	Bezier multipliers
  */
-static double B0(u)
-    double	u;
-{
-    double tmp = 1.0 - u;
+static CGFloat B0(CGFloat u) {
+    CGFloat tmp = 1.0 - u;
     return (tmp * tmp * tmp);
 }
 
-
-static double B1(u)
-    double	u;
-{
-    double tmp = 1.0 - u;
+static CGFloat B1(CGFloat u) {
+    CGFloat tmp = 1.0 - u;
     return (3 * u * (tmp * tmp));
 }
 
-static double B2(u)
-    double	u;
-{
-    double tmp = 1.0 - u;
+static CGFloat B2(CGFloat u) {
+    CGFloat tmp = 1.0 - u;
     return (3 * u * u * tmp);
 }
 
-static double B3(u)
-    double	u;
-{
+static CGFloat B3(CGFloat u) {
     return (u * u * u);
 }
 
@@ -446,38 +401,38 @@ static double B3(u)
  * ComputeLeftTangent, ComputeRightTangent, ComputeCenterTangent :
  *Approximate unit tangents at endpoints and "center" of digitized curve
  */
-static Vector2 ComputeLeftTangent(d, end)
-    Point2	*d;			/*  Digitized points*/
-    int		end;		/*  Index to "left" end of region */
+static CGPoint ComputeLeftTangent(d, end)
+    CGPoint	*d;			/*  Digitized points*/
+    NSUInteger		end;		/*  Index to "left" end of region */
 {
-    Vector2	tHat1;
-    tHat1 = V2SubII(d[end+1], d[end]);
-    tHat1 = *V2Normalize(&tHat1);
+    CGPoint	tHat1;
+    tHat1 = V2Sub(d[end+1], d[end]);
+    tHat1 = V2Normalize(tHat1);
     return tHat1;
 }
 
-static Vector2 ComputeRightTangent(d, end)
-    Point2	*d;			/*  Digitized points		*/
+static CGPoint ComputeRightTangent(d, end)
+    CGPoint	*d;			/*  Digitized points		*/
     int		end;		/*  Index to "right" end of region */
 {
-    Vector2	tHat2;
-    tHat2 = V2SubII(d[end-1], d[end]);
-    tHat2 = *V2Normalize(&tHat2);
+    CGPoint	tHat2;
+    tHat2 = V2Sub(d[end-1], d[end]);
+    tHat2 = V2Normalize(tHat2);
     return tHat2;
 }
 
 
-static Vector2 ComputeCenterTangent(d, center)
-    Point2	*d;			/*  Digitized points			*/
-    int		center;		/*  Index to point inside region	*/
+static CGPoint ComputeCenterTangent(d, center)
+    CGPoint	*d;			/*  Digitized points			*/
+    NSUInteger		center;		/*  Index to point inside region	*/
 {
-    Vector2	V1, V2, tHatCenter;
+    CGPoint	V1, V2, tHatCenter;
 
-    V1 = V2SubII(d[center-1], d[center]);
-    V2 = V2SubII(d[center], d[center+1]);
+    V1 = V2Sub(d[center-1], d[center]);
+    V2 = V2Sub(d[center], d[center+1]);
     tHatCenter.x = (V1.x + V2.x)/2.0;
     tHatCenter.y = (V1.y + V2.y)/2.0;
-    tHatCenter = *V2Normalize(&tHatCenter);
+    tHatCenter = V2Normalize(tHatCenter);
     return tHatCenter;
 }
 
@@ -488,21 +443,20 @@ static Vector2 ComputeCenterTangent(d, center)
  *	using relative distances between points.
  */
 static double *ChordLengthParameterize(d, first, last)
-    Point2	*d;			/* Array of digitized points */
-    int		first, last;		/*  Indices defining region	*/
+    CGPoint	*d;			/* Array of digitized points */
+    NSUInteger		first, last;		/*  Indices defining region	*/
 {
-    int		i;	
-    double	*u;			/*  Parameterization		*/
+    CGFloat	*u;			/*  Parameterization		*/
 
     u = (double *)malloc((unsigned)(last-first+1) * sizeof(double));
 
     u[0] = 0.0;
-    for (i = first+1; i <= last; i++) {
+    for (NSUInteger i = first+1; i <= last; i++) {
 		u[i-first] = u[i-first-1] +
-	  			V2DistanceBetween2Points(&d[i], &d[i-1]);
+	  			V2DistanceBetween2Points(d[i], d[i-1]);
     }
 
-    for (i = first + 1; i <= last; i++) {
+    for (NSUInteger i = first + 1; i <= last; i++) {
 		u[i-first] = u[i-first] / u[last-first];
     }
 
@@ -518,24 +472,23 @@ static double *ChordLengthParameterize(d, first, last)
  *	to fitted curve.
 */
 static double ComputeMaxError(d, first, last, bezCurve, u, splitPoint)
-    Point2	*d;			/*  Array of digitized points	*/
-    int		first, last;		/*  Indices defining region	*/
+    CGPoint	*d;			/*  Array of digitized points	*/
+    NSUInteger		first, last;		/*  Indices defining region	*/
     BezierCurve	bezCurve;		/*  Fitted Bezier curve		*/
-    double	*u;			/*  Parameterization of points	*/
-    int		*splitPoint;		/*  Point of maximum error	*/
+    CGFloat	*u;			/*  Parameterization of points	*/
+    NSUInteger		*splitPoint;		/*  Point of maximum error	*/
 {
-    int		i;
-    double	maxDist;		/*  Maximum error		*/
-    double	dist;		/*  Current error		*/
-    Point2	P;			/*  Point on curve		*/
-    Vector2	v;			/*  Vector from point to curve	*/
+    CGFloat	maxDist;		/*  Maximum error		*/
+    CGFloat	dist;		/*  Current error		*/
+    CGPoint	P;			/*  Point on curve		*/
+    CGPoint	v;			/*  Vector from point to curve	*/
 
     *splitPoint = (last - first + 1)/2;
     maxDist = 0.0;
-    for (i = first + 1; i < last; i++) {
+    for (NSUInteger i = first + 1; i < last; i++) {
 		P = BezierII(3, bezCurve, u[i-first]);
-		v = V2SubII(P, d[i]);
-		dist = V2SquaredLength(&v);
+		v = V2Sub(P, d[i]);
+		dist = V2SquaredLength(v);
 		if (dist >= maxDist) {
 	    	maxDist = dist;
 	    	*splitPoint = i;
@@ -543,26 +496,70 @@ static double ComputeMaxError(d, first, last, bezCurve, u, splitPoint)
     }
     return (maxDist);
 }
-static Vector2 V2AddII(a, b)
-    Vector2 a, b;
+
+static CGPoint V2ScaleIII(v, s)
+    CGPoint	v;
+    CGFloat	s;
 {
-    Vector2	c;
-    c.x = a.x + b.x;  c.y = a.y + b.y;
-    return (c);
-}
-static Vector2 V2ScaleIII(v, s)
-    Vector2	v;
-    double	s;
-{
-    Vector2 result;
+    CGPoint result;
     result.x = v.x * s; result.y = v.y * s;
     return (result);
 }
 
-static Vector2 V2SubII(a, b)
-    Vector2	a, b;
-{
-    Vector2	c;
-    c.x = a.x - b.x; c.y = a.y - b.y;
-    return (c);
+/* returns squared length of input vector */
+static CGFloat V2SquaredLength(CGPoint a) {	
+    return((a.x * a.x)+(a.y * a.y));
 }
+
+/* returns length of input vector */
+static CGFloat V2Length(CGPoint a) {
+	return(sqrt(V2SquaredLength(a)));
+}
+
+
+/* negates the input vector and returns it */
+static CGPoint V2Negate(CGPoint v) {
+	v.x = -v.x;  v.y = -v.y;
+	return(v);
+}
+
+/* normalizes the input vector and returns it */
+static CGPoint V2Normalize(CGPoint v) {
+    double len = V2Length(v);
+	if (len != 0.0) { v.x /= len;  v.y /= len; }
+	return(v);
+}
+
+/* scales the input vector to the new length and returns it */
+static CGPoint V2Scale(CGPoint v, double newlen) {
+    double len = V2Length(v);
+	if (len != 0.0) { v.x *= newlen/len;   v.y *= newlen/len; }
+	return(v);
+}
+
+/* return vector sum c = a+b */
+static CGPoint V2Add(CGPoint a, CGPoint b) {
+    CGPoint c;
+	c.x = a.x+b.x;  c.y = a.y+b.y;
+	return(c);
+}
+
+/* return vector difference c = a-b */
+static CGPoint V2Sub(CGPoint a, CGPoint b) {
+    CGPoint c;
+	c.x = a.x - b.x;  c.y = a.y - b.y;
+	return(c);
+}
+
+/* return the dot product of vectors a and b */
+static CGFloat V2Dot(CGPoint a, CGPoint b) {
+	return((a.x*b.x)+(a.y*b.y));
+}
+
+/* return the distance between two points */
+static CGFloat V2DistanceBetween2Points(CGPoint a, CGPoint b) {
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+	return(sqrt((dx*dx)+(dy*dy)));
+}
+

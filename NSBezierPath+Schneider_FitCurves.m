@@ -10,7 +10,6 @@
 //  http://tobias-conradi.de/index.php/2011/05/06/nsbezierpath-additions
 
 #import "NSBezierPath+Schneider_FitCurves.h"
-#import "GraphicsGems.h"
 
 @implementation NSBezierPath (NSBezierPath_Schneider_FitCurves)
 /*
@@ -19,7 +18,7 @@
  */
 - (int) schneiderFitCurves:(double) error {
     // number of elements
-    int count = [self elementCount];
+    NSUInteger count = [self elementCount];
     // allocating C-style array of CGPoints building the path
     CGPoint *pathPointArray = malloc(sizeof(CGPoint)*count);
     // allocating C-style array of CGPoints to get the points of the single elements
@@ -50,7 +49,7 @@
     /*
      Start Algorythm
      */
-    FitCurve(pathPointArray, count, 4.0,self);
+    FitCurve(pathPointArray, count, error, self);
 
     
     

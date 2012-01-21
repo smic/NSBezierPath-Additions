@@ -73,7 +73,7 @@ static double perpendicularDistance (NSPoint Point1, NSPoint Point2, NSPoint Poi
                 [newPath closePath];
                 break;
             default:
-                TCLogString(@"Wrong Elementtyp");
+                NSLog(@"Wrong Elementtyp");
                 break;
         }
         

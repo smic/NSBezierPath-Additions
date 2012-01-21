@@ -10,7 +10,6 @@
 //  http://tobias-conradi.de/index.php/2011/05/06/nsbezierpath-additions
 
 #import <Foundation/Foundation.h>
-#import "TCLog.h"
 
 @interface NSBezierPath (NSBezierPath_DouglasPeucker)
 
