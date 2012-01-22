@@ -14,5 +14,5 @@
 @interface NSBezierPath (NSBezierPath_DouglasPeucker)
 
 //Only works for paths build without NSCurveToBezierPathElements
-- (NSBezierPath *) pathFromDouglasPeuckerReduction:(double)tolerance;
+- (NSBezierPath *) pathFromDouglasPeuckerReduction:(CGFloat)tolerance;
 @end

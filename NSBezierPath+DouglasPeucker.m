@@ -12,6 +12,7 @@
 #import "NSBezierPath+DouglasPeucker.h"
 
 @interface NSBezierPath()
+
 - (void) douglasPeuckerReductionTolerance:(double)tolerance 
                                firstIndex:(NSUInteger)first 
                                 lastIndex:(NSUInteger)last 
@@ -19,9 +20,7 @@
 
 @end
 
-CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c);
-
-CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c) {
+static CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c) {
     
     CGFloat lA = sqrt((abs(b.x)-abs(c.x))*(abs(b.x)-abs(c.x))+(abs(b.y)-abs(c.y))*(abs(b.y)-abs(c.y)));
     CGFloat lB = sqrt((abs(a.x)-abs(c.x))*(abs(a.x)-abs(c.x))+(abs(a.y)-abs(c.y))*(abs(a.y)-abs(c.y)));
@@ -31,16 +30,19 @@ CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c) {
     
 }
 
-static CGFloat perpendicularDistance (NSPoint Point1, NSPoint Point2, NSPoint Point)
-{
+static CGFloat perpendicularDistance (NSPoint point1, NSPoint point2, NSPoint point) {
     //Area = |(1/2)(x1y2 + x2y3 + x3y1 - x2y1 - x3y2 - x1y3)|   *Area of triangle
     //Base = v((x1-x2)²+(x1-x2)²)                               *Base of Triangle*
     //Area = .5*Base*H                                          *Solve for height
     //Height = Area/.5/Base
     
-    CGFloat area = abs(.5f * (Point1.x * Point2.y + Point2.x * Point.y + Point.x * Point1.y - Point2.x * Point1.y - Point.x * Point2.y - Point1.x * Point.y));
-    CGFloat bottom = sqrt(pow(Point1.x - Point2.x, 2) + 
-                          pow(Point1.y - Point2.y, 2));
+    CGFloat area = abs(.5f * (point1.x * point2.y + 
+                              point2.x * point.y  + 
+                              point.x  * point1.y - 
+                              point2.x * point1.y - 
+                              point.x  * point2.y - 
+                              point1.x * point.y));
+    CGFloat bottom = hypotf(point1.x - point2.x, point1.y - point2.y);
     CGFloat height = area / bottom * 2.0f;
     
     return height;
@@ -51,7 +53,11 @@ static CGFloat perpendicularDistance (NSPoint Point1, NSPoint Point2, NSPoint Po
 @implementation NSBezierPath (NSBezierPath_DouglasPeucker)
 
 
-- (NSBezierPath *) pathFromDouglasPeuckerReduction:(double)tolerance {
+- (NSBezierPath *)pathFromDouglasPeuckerReduction:(CGFloat)tolerance {
+    if ([self elementCount] <= 2) {
+        return self;
+    }
+    
     for (NSUInteger elementIndex = 0; elementIndex < [self elementCount]; elementIndex++) {
         if ([self elementAtIndex:elementIndex] == NSCurveToBezierPathElement) {
             return nil;   
@@ -60,22 +66,22 @@ static CGFloat perpendicularDistance (NSPoint Point1, NSPoint Point2, NSPoint Po
     
     NSMutableIndexSet *indexesToKeep = [[NSMutableIndexSet indexSet] retain];
     [indexesToKeep addIndex:0];
-    [indexesToKeep addIndex:[self elementCount]-1];
+    [indexesToKeep addIndex:[self elementCount] - 1];
     [self douglasPeuckerReductionTolerance:tolerance 
                                 firstIndex:0 
                                  lastIndex:[self elementCount] - 1 
                              indexesToKepp:indexesToKeep];
     
-    NSBezierPath *newPath = [[NSBezierPath bezierPath] retain];
-    NSPointArray pointArray = malloc(sizeof(NSPoint)*3);
-    [indexesToKeep enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-        NSBezierPathElement elementTyp = [self elementAtIndex:idx associatedPoints:pointArray];
+    NSBezierPath *newPath = [NSBezierPath bezierPath];
+    [indexesToKeep enumerateIndexesUsingBlock:^(NSUInteger elementIndex, BOOL *stop){
+        NSPoint points[3];
+        NSBezierPathElement elementTyp = [self elementAtIndex:elementIndex associatedPoints:points];
         switch (elementTyp) {
             case NSMoveToBezierPathElement:
-                [newPath moveToPoint:pointArray[0]];
+                [newPath moveToPoint:points[0]];
                 break;
             case NSLineToBezierPathElement:
-                [newPath lineToPoint:pointArray[0]];
+                [newPath lineToPoint:points[0]];
                 break;
             case NSClosePathBezierPathElement:
                 [newPath closePath];
@@ -84,7 +90,6 @@ static CGFloat perpendicularDistance (NSPoint Point1, NSPoint Point2, NSPoint Po
                 NSLog(@"Wrong Elementtyp");
                 break;
         }
-        
     }];
 
     [newPath setWindingRule:[self windingRule]];
@@ -97,18 +102,16 @@ static CGFloat perpendicularDistance (NSPoint Point1, NSPoint Point2, NSPoint Po
     NSInteger count;
     [self getLineDash:lineDash count:&count phase:&phase];
     [newPath setLineDash:lineDash count:count phase:phase];
-    return [newPath autorelease];
+    return newPath;
 }
 
-- (void) douglasPeuckerReductionTolerance:(double)tolerance 
-                               firstIndex:(NSUInteger)first 
-                                lastIndex:(NSUInteger)last 
-                            indexesToKepp:(NSMutableIndexSet *)indexesToKeep { 
-    if (first==last) {
+- (void)douglasPeuckerReductionTolerance:(CGFloat)tolerance 
+                              firstIndex:(NSUInteger)first 
+                               lastIndex:(NSUInteger)last 
+                           indexesToKepp:(NSMutableIndexSet *)indexesToKeep { 
+    if (first == last) {
         return;
     }
-    double distance = 0, maxDistance = 0;
-    NSUInteger indexFarthest = 0;
     
     NSPoint points[3];
     [self elementAtIndex:first associatedPoints:points];
@@ -116,17 +119,26 @@ static CGFloat perpendicularDistance (NSPoint Point1, NSPoint Point2, NSPoint Po
     [self elementAtIndex:last associatedPoints:points];
 
     NSPoint lastPoint = points[0];
-    
+    CGFloat maxDistance = 0;
+    NSUInteger indexFarthest = 0;
     for (NSUInteger elementIndex = first + 1; elementIndex < last; elementIndex++) {
-        if(NSCurveToBezierPathElement ==[self elementAtIndex:elementIndex associatedPoints:points]) {
-            NSLog(@"Wrong PathElement Type");
-        }
-        
-        distance = perpendicularDistance(firstPoint, lastPoint, points[0]);
-        // if the current distance is larger then the other distances
-        if (distance > maxDistance) {
-            maxDistance=distance;
-            indexFarthest = elementIndex;
+        NSBezierPathElement elementTyp = [self elementAtIndex:elementIndex associatedPoints:points];
+        switch (elementTyp) {
+            case NSMoveToBezierPathElement:
+            case NSLineToBezierPathElement: {
+                CGFloat distance = perpendicularDistance(firstPoint, lastPoint, points[0]);
+                // if the current distance is larger then the other distances
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    indexFarthest = elementIndex;
+                }
+            } break;
+            case NSClosePathBezierPathElement:
+                // nothing
+                break;
+            default:
+                NSLog(@"Wrong Elementtyp");
+                break;
         }
     }
     
