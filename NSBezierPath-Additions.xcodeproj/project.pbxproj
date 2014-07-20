@@ -1,0 +1,526 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D44CB145197C6100006B2E36 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44CB10C197C5F93006B2E36 /* Cocoa.framework */; };
+		D44CB14B197C6100006B2E36 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D44CB149197C6100006B2E36 /* InfoPlist.strings */; };
+		D44CB16C197C615B006B2E36 /* NSBezierPath+DouglasPeucker.h in Headers */ = {isa = PBXBuildFile; fileRef = D44CB168197C615B006B2E36 /* NSBezierPath+DouglasPeucker.h */; };
+		D44CB16D197C615B006B2E36 /* NSBezierPath+DouglasPeucker.m in Sources */ = {isa = PBXBuildFile; fileRef = D44CB169197C615B006B2E36 /* NSBezierPath+DouglasPeucker.m */; };
+		D44CB16E197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.h in Headers */ = {isa = PBXBuildFile; fileRef = D44CB16A197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.h */; };
+		D44CB16F197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.m in Sources */ = {isa = PBXBuildFile; fileRef = D44CB16B197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.m */; };
+		D44CB175197C6291006B2E36 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44CB10C197C5F93006B2E36 /* Cocoa.framework */; };
+		D44CB17B197C6291006B2E36 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D44CB179197C6291006B2E36 /* InfoPlist.strings */; };
+		D44CB17D197C6291006B2E36 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D44CB17C197C6291006B2E36 /* main.m */; };
+		D44CB181197C6291006B2E36 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = D44CB17F197C6291006B2E36 /* Credits.rtf */; };
+		D44CB184197C6291006B2E36 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D44CB183197C6291006B2E36 /* AppDelegate.m */; };
+		D44CB187197C6291006B2E36 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D44CB185197C6291006B2E36 /* MainMenu.xib */; };
+		D44CB189197C6291006B2E36 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D44CB188197C6291006B2E36 /* Images.xcassets */; };
+		D44CB1A3197C638D006B2E36 /* Canvas.m in Sources */ = {isa = PBXBuildFile; fileRef = D44CB1A2197C638D006B2E36 /* Canvas.m */; };
+		D44CB1A6197C63DE006B2E36 /* FitCurves.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44CB144197C6100006B2E36 /* FitCurves.framework */; };
+		D44CB1A8197C63ED006B2E36 /* FitCurves.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D44CB144197C6100006B2E36 /* FitCurves.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D44CB1A4197C63D1006B2E36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D44CB100197C5F93006B2E36 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D44CB143197C6100006B2E36;
+			remoteInfo = FitCurves;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D44CB1A7197C63E3006B2E36 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D44CB1A8197C63ED006B2E36 /* FitCurves.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D44CB10C197C5F93006B2E36 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		D44CB10F197C5F93006B2E36 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D44CB110197C5F93006B2E36 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		D44CB111197C5F93006B2E36 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		D44CB121197C5F93006B2E36 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		D44CB144197C6100006B2E36 /* FitCurves.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FitCurves.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D44CB148197C6100006B2E36 /* FitCurves-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FitCurves-Info.plist"; sourceTree = "<group>"; };
+		D44CB14A197C6100006B2E36 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D44CB14C197C6100006B2E36 /* FitCurves-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FitCurves-Prefix.pch"; sourceTree = "<group>"; };
+		D44CB14D197C6100006B2E36 /* FitCurves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FitCurves.h; sourceTree = "<group>"; };
+		D44CB168197C615B006B2E36 /* NSBezierPath+DouglasPeucker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBezierPath+DouglasPeucker.h"; sourceTree = "<group>"; };
+		D44CB169197C615B006B2E36 /* NSBezierPath+DouglasPeucker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBezierPath+DouglasPeucker.m"; sourceTree = "<group>"; };
+		D44CB16A197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBezierPath+Schneider_FitCurves.h"; sourceTree = "<group>"; };
+		D44CB16B197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBezierPath+Schneider_FitCurves.m"; sourceTree = "<group>"; };
+		D44CB174197C6291006B2E36 /* FitCurvesDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitCurvesDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D44CB178197C6291006B2E36 /* FitCurvesDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FitCurvesDemo-Info.plist"; sourceTree = "<group>"; };
+		D44CB17A197C6291006B2E36 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D44CB17C197C6291006B2E36 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D44CB17E197C6291006B2E36 /* FitCurvesDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FitCurvesDemo-Prefix.pch"; sourceTree = "<group>"; };
+		D44CB180197C6291006B2E36 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		D44CB182197C6291006B2E36 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		D44CB183197C6291006B2E36 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D44CB186197C6291006B2E36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D44CB188197C6291006B2E36 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D44CB1A1197C638D006B2E36 /* Canvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Canvas.h; sourceTree = "<group>"; };
+		D44CB1A2197C638D006B2E36 /* Canvas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Canvas.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D44CB140197C6100006B2E36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D44CB145197C6100006B2E36 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D44CB171197C6291006B2E36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D44CB1A6197C63DE006B2E36 /* FitCurves.framework in Frameworks */,
+				D44CB175197C6291006B2E36 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D44CB0FF197C5F93006B2E36 = {
+			isa = PBXGroup;
+			children = (
+				D44CB146197C6100006B2E36 /* FitCurves */,
+				D44CB176197C6291006B2E36 /* FitCurvesDemo */,
+				D44CB10B197C5F93006B2E36 /* Frameworks */,
+				D44CB10A197C5F93006B2E36 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D44CB10A197C5F93006B2E36 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D44CB144197C6100006B2E36 /* FitCurves.framework */,
+				D44CB174197C6291006B2E36 /* FitCurvesDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D44CB10B197C5F93006B2E36 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D44CB10C197C5F93006B2E36 /* Cocoa.framework */,
+				D44CB121197C5F93006B2E36 /* XCTest.framework */,
+				D44CB10E197C5F93006B2E36 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D44CB10E197C5F93006B2E36 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D44CB10F197C5F93006B2E36 /* Foundation.framework */,
+				D44CB110197C5F93006B2E36 /* CoreData.framework */,
+				D44CB111197C5F93006B2E36 /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		D44CB146197C6100006B2E36 /* FitCurves */ = {
+			isa = PBXGroup;
+			children = (
+				D44CB14D197C6100006B2E36 /* FitCurves.h */,
+				D44CB168197C615B006B2E36 /* NSBezierPath+DouglasPeucker.h */,
+				D44CB169197C615B006B2E36 /* NSBezierPath+DouglasPeucker.m */,
+				D44CB16A197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.h */,
+				D44CB16B197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.m */,
+				D44CB147197C6100006B2E36 /* Supporting Files */,
+			);
+			path = FitCurves;
+			sourceTree = "<group>";
+		};
+		D44CB147197C6100006B2E36 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D44CB148197C6100006B2E36 /* FitCurves-Info.plist */,
+				D44CB149197C6100006B2E36 /* InfoPlist.strings */,
+				D44CB14C197C6100006B2E36 /* FitCurves-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D44CB176197C6291006B2E36 /* FitCurvesDemo */ = {
+			isa = PBXGroup;
+			children = (
+				D44CB1A1197C638D006B2E36 /* Canvas.h */,
+				D44CB1A2197C638D006B2E36 /* Canvas.m */,
+				D44CB182197C6291006B2E36 /* AppDelegate.h */,
+				D44CB183197C6291006B2E36 /* AppDelegate.m */,
+				D44CB185197C6291006B2E36 /* MainMenu.xib */,
+				D44CB188197C6291006B2E36 /* Images.xcassets */,
+				D44CB177197C6291006B2E36 /* Supporting Files */,
+			);
+			path = FitCurvesDemo;
+			sourceTree = "<group>";
+		};
+		D44CB177197C6291006B2E36 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D44CB178197C6291006B2E36 /* FitCurvesDemo-Info.plist */,
+				D44CB179197C6291006B2E36 /* InfoPlist.strings */,
+				D44CB17C197C6291006B2E36 /* main.m */,
+				D44CB17E197C6291006B2E36 /* FitCurvesDemo-Prefix.pch */,
+				D44CB17F197C6291006B2E36 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D44CB141197C6100006B2E36 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D44CB16C197C615B006B2E36 /* NSBezierPath+DouglasPeucker.h in Headers */,
+				D44CB16E197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D44CB143197C6100006B2E36 /* FitCurves */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D44CB162197C6101006B2E36 /* Build configuration list for PBXNativeTarget "FitCurves" */;
+			buildPhases = (
+				D44CB13F197C6100006B2E36 /* Sources */,
+				D44CB140197C6100006B2E36 /* Frameworks */,
+				D44CB141197C6100006B2E36 /* Headers */,
+				D44CB142197C6100006B2E36 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FitCurves;
+			productName = FitCurves;
+			productReference = D44CB144197C6100006B2E36 /* FitCurves.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D44CB173197C6291006B2E36 /* FitCurvesDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D44CB19B197C6292006B2E36 /* Build configuration list for PBXNativeTarget "FitCurvesDemo" */;
+			buildPhases = (
+				D44CB170197C6291006B2E36 /* Sources */,
+				D44CB171197C6291006B2E36 /* Frameworks */,
+				D44CB172197C6291006B2E36 /* Resources */,
+				D44CB1A7197C63E3006B2E36 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D44CB1A5197C63D1006B2E36 /* PBXTargetDependency */,
+			);
+			name = FitCurvesDemo;
+			productName = FitCurvesDemo;
+			productReference = D44CB174197C6291006B2E36 /* FitCurvesDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D44CB100197C5F93006B2E36 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Stephan Michels";
+			};
+			buildConfigurationList = D44CB103197C5F93006B2E36 /* Build configuration list for PBXProject "NSBezierPath-Additions" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D44CB0FF197C5F93006B2E36;
+			productRefGroup = D44CB10A197C5F93006B2E36 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D44CB143197C6100006B2E36 /* FitCurves */,
+				D44CB173197C6291006B2E36 /* FitCurvesDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D44CB142197C6100006B2E36 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D44CB14B197C6100006B2E36 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D44CB172197C6291006B2E36 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D44CB17B197C6291006B2E36 /* InfoPlist.strings in Resources */,
+				D44CB189197C6291006B2E36 /* Images.xcassets in Resources */,
+				D44CB181197C6291006B2E36 /* Credits.rtf in Resources */,
+				D44CB187197C6291006B2E36 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D44CB13F197C6100006B2E36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D44CB16D197C615B006B2E36 /* NSBezierPath+DouglasPeucker.m in Sources */,
+				D44CB16F197C615B006B2E36 /* NSBezierPath+Schneider_FitCurves.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D44CB170197C6291006B2E36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D44CB184197C6291006B2E36 /* AppDelegate.m in Sources */,
+				D44CB17D197C6291006B2E36 /* main.m in Sources */,
+				D44CB1A3197C638D006B2E36 /* Canvas.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D44CB1A5197C63D1006B2E36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D44CB143197C6100006B2E36 /* FitCurves */;
+			targetProxy = D44CB1A4197C63D1006B2E36 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D44CB149197C6100006B2E36 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D44CB14A197C6100006B2E36 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		D44CB179197C6291006B2E36 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D44CB17A197C6291006B2E36 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		D44CB17F197C6291006B2E36 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D44CB180197C6291006B2E36 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		D44CB185197C6291006B2E36 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D44CB186197C6291006B2E36 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D44CB12F197C5F93006B2E36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		D44CB130197C5F93006B2E36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		D44CB163197C6101006B2E36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "FitCurves/FitCurves-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "FitCurves/FitCurves-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		D44CB164197C6101006B2E36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "FitCurves/FitCurves-Prefix.pch";
+				INFOPLIST_FILE = "FitCurves/FitCurves-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		D44CB19C197C6292006B2E36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "FitCurvesDemo/FitCurvesDemo-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "FitCurvesDemo/FitCurvesDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		D44CB19D197C6292006B2E36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "FitCurvesDemo/FitCurvesDemo-Prefix.pch";
+				INFOPLIST_FILE = "FitCurvesDemo/FitCurvesDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D44CB103197C5F93006B2E36 /* Build configuration list for PBXProject "NSBezierPath-Additions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D44CB12F197C5F93006B2E36 /* Debug */,
+				D44CB130197C5F93006B2E36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D44CB162197C6101006B2E36 /* Build configuration list for PBXNativeTarget "FitCurves" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D44CB163197C6101006B2E36 /* Debug */,
+				D44CB164197C6101006B2E36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		D44CB19B197C6292006B2E36 /* Build configuration list for PBXNativeTarget "FitCurvesDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D44CB19C197C6292006B2E36 /* Debug */,
+				D44CB19D197C6292006B2E36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D44CB100197C5F93006B2E36 /* Project object */;
+}
