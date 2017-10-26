@@ -126,7 +126,7 @@ static char CanvasObservationContext;
     
     // draw tangents to the control points
     NSPoint points[3];
-    NSPoint previousPoint;
+    NSPoint previousPoint = NSZeroPoint; // TODO: Check, if this is a good initial value.
     NSUInteger numberOfElements = [self.path elementCount];
     for (NSUInteger elementIndex = 0; elementIndex < numberOfElements; elementIndex++) {
         NSBezierPathElement element = [self.path elementAtIndex:(NSInteger)elementIndex associatedPoints:points];
