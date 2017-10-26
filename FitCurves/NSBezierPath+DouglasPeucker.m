@@ -11,14 +11,7 @@
 
 #import "NSBezierPath+DouglasPeucker.h"
 
-@interface NSBezierPath()
 
-- (void) douglasPeuckerReductionTolerance:(double)tolerance 
-                               firstIndex:(NSUInteger)first 
-                                lastIndex:(NSUInteger)last 
-                            indexesToKepp:(NSMutableIndexSet *)indexesToKeep;
-
-@end
 
 static CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c) {
     
