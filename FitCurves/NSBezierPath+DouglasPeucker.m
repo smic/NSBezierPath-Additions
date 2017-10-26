@@ -11,13 +11,14 @@
 
 #import "NSBezierPath+DouglasPeucker.h"
 
+#import <tgmath.h>
 
 
 static CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c) {
     
-    CGFloat lA = sqrt((abs(b.x)-abs(c.x))*(abs(b.x)-abs(c.x))+(abs(b.y)-abs(c.y))*(abs(b.y)-abs(c.y)));
-    CGFloat lB = sqrt((abs(a.x)-abs(c.x))*(abs(a.x)-abs(c.x))+(abs(a.y)-abs(c.y))*(abs(a.y)-abs(c.y)));
-    CGFloat lC = sqrt((abs(b.x)-abs(a.x))*(abs(b.x)-abs(a.x))+(abs(b.y)-abs(a.y))*(abs(b.y)-abs(a.y)));
+    CGFloat lA = sqrt((fabs(b.x)-fabs(c.x))*(fabs(b.x)-fabs(c.x))+(fabs(b.y)-fabs(c.y))*(fabs(b.y)-fabs(c.y)));
+    CGFloat lB = sqrt((fabs(a.x)-fabs(c.x))*(fabs(a.x)-fabs(c.x))+(fabs(a.y)-fabs(c.y))*(fabs(a.y)-fabs(c.y)));
+    CGFloat lC = sqrt((fabs(b.x)-fabs(a.x))*(fabs(b.x)-fabs(a.x))+(fabs(b.y)-fabs(a.y))*(fabs(b.y)-fabs(a.y)));
     
     return sqrt(2*(lA*lA*lB*lB+lB*lB*lC*lC+lC*lC*lA*lA)-(lA*lA*lA*lA+lB*lB*lB*lB+lC*lC*lC*lC)/(2*lA));
     
@@ -29,12 +30,12 @@ static CGFloat perpendicularDistance (NSPoint point1, NSPoint point2, NSPoint po
     //Area = .5*Base*H                                          *Solve for height
     //Height = Area/.5/Base
     
-    CGFloat area = abs(.5f * (point1.x * point2.y + 
-                              point2.x * point.y  + 
-                              point.x  * point1.y - 
-                              point2.x * point1.y - 
-                              point.x  * point2.y - 
-                              point1.x * point.y));
+    CGFloat area = fabs(.5f * (point1.x * point2.y +
+                               point2.x * point.y  +
+                               point.x  * point1.y -
+                               point2.x * point1.y -
+                               point.x  * point2.y -
+                               point1.x * point.y));
     CGFloat bottom = hypotf(point1.x - point2.x, point1.y - point2.y);
     CGFloat height = area / bottom * 2.0f;
     
