@@ -22,7 +22,7 @@
 		D44CB189197C6291006B2E36 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D44CB188197C6291006B2E36 /* Images.xcassets */; };
 		D44CB1A3197C638D006B2E36 /* Canvas.m in Sources */ = {isa = PBXBuildFile; fileRef = D44CB1A2197C638D006B2E36 /* Canvas.m */; };
 		D44CB1A6197C63DE006B2E36 /* FitCurves.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44CB144197C6100006B2E36 /* FitCurves.framework */; };
-		D44CB1A8197C63ED006B2E36 /* FitCurves.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D44CB144197C6100006B2E36 /* FitCurves.framework */; };
+		D44CB1A8197C63ED006B2E36 /* FitCurves.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D44CB144197C6100006B2E36 /* FitCurves.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -245,7 +245,7 @@
 		D44CB100197C5F93006B2E36 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Stephan Michels";
 			};
 			buildConfigurationList = D44CB103197C5F93006B2E36 /* Build configuration list for PBXProject "NSBezierPath-Additions" */;
@@ -372,6 +372,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -440,6 +441,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "FitCurves/FitCurves-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.stephanmichels.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -456,6 +458,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FitCurves/FitCurves-Prefix.pch";
 				INFOPLIST_FILE = "FitCurves/FitCurves-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.stephanmichels.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -474,6 +477,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "FitCurvesDemo/FitCurvesDemo-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.stephanmichels.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -488,6 +492,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FitCurvesDemo/FitCurvesDemo-Prefix.pch";
 				INFOPLIST_FILE = "FitCurvesDemo/FitCurvesDemo-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.stephanmichels.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
