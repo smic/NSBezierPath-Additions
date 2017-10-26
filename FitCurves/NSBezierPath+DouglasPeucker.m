@@ -14,6 +14,7 @@
 #import <tgmath.h>
 
 
+#if 0
 static CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c) {
     
     CGFloat lA = sqrt((fabs(b.x)-fabs(c.x))*(fabs(b.x)-fabs(c.x))+(fabs(b.y)-fabs(c.y))*(fabs(b.y)-fabs(c.y)));
@@ -23,6 +24,7 @@ static CGFloat distancePointFromLine(NSPoint a, NSPoint b, NSPoint c) {
     return sqrt(2*(lA*lA*lB*lB+lB*lB*lC*lC+lC*lC*lA*lA)-(lA*lA*lA*lA+lB*lB*lB*lB+lC*lC*lC*lC)/(2*lA));
     
 }
+#endif
 
 static CGFloat perpendicularDistance (NSPoint point1, NSPoint point2, NSPoint point) {
     //Area = |(1/2)(x1y2 + x2y3 + x3y1 - x2y1 - x3y2 - x1y3)|   *Area of triangle
