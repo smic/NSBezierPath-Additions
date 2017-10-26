@@ -107,6 +107,7 @@
 				D44CB10A197C5F93006B2E36 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		D44CB10A197C5F93006B2E36 /* Products */ = {
 			isa = PBXGroup;
@@ -511,6 +512,7 @@
 				D44CB164197C6101006B2E36 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D44CB19B197C6292006B2E36 /* Build configuration list for PBXNativeTarget "FitCurvesDemo" */ = {
 			isa = XCConfigurationList;
@@ -519,6 +521,7 @@
 				D44CB19D197C6292006B2E36 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
